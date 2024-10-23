@@ -1,0 +1,64 @@
+## Day 02: **Additional S3 Buckets and Basic Frontend-Backend Setup**
+### Tasks:
+1. **Create Two More S3 Buckets:**
+   - Go to AWS Console > S3 > Create Bucket.
+   - Bucket 1: **trained-data-bucket**
+   - Bucket 2: **captured-data-bucket**
+   - Region: **Asia Pacific (Mumbai) (ap-south-1)**.
+
+2. **Set Up the Frontend and Backend:**
+   - **Frontend (HTML + JS)**: Create a simple webpage for camera access to capture images.
+     - Folder structure:
+       ```
+       /static
+          └── camera.js (Handles camera access)
+       /template
+          └── index.html (Frontend HTML)
+       /app.py (Backend Flask server)
+       ```
+
+   - **Frontend Code (`index.html`):**
+     ```html
+     <html>
+       <head>
+         <title>Face Recognition Attendance</title>
+       </head>
+       <body>
+         <h1>Capture and Submit Your Face</h1>
+         <video id="video" width="640" height="480" autoplay></video>
+         <button id="snap">Capture</button>
+         <canvas id="canvas" width="640" height="480"></canvas>
+         <script src="/static/camera.js"></script>
+       </body>
+     </html>
+     ```
+
+   - **Backend Code (`app.py`)**:
+     ```python
+     from flask import Flask, render_template, request, jsonify
+     import boto3
+     import base64
+     from io import BytesIO
+     from PIL import Image
+
+     app = Flask(__name__)
+     rekognition_client = boto3.client('rekognition', region_name='ap-south-1')
+
+     @app.route('/')
+     def index():
+         return render_template('index.html')
+
+     @app.route('/capture', methods=['POST'])
+     def capture_image():
+         # Logic to handle face recognition
+         pass
+
+     if __name__ == '__main__':
+         app.run(debug=True)
+     ```
+
+3. **Commands to Install Flask and Run the App:**
+   ```bash
+   pip install flask boto3 pillow
+   python app.py
+   ```
