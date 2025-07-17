@@ -114,7 +114,8 @@ python -m streamlit run app.py
 
 > Watch full system in action:
 
-🎬 **Demo:** [Click to watch](https://youtu.be/NtWbiVcd0cc)
+🎬 **Demo:** [![Art.png](https://github.com/22MH1A42G1/Face-Recognition-Attendance-System-repository-iship/blob/main/output/Art.png)](https://youtu.be/NtWbiVcd0cc)
+
 
 
 ---
