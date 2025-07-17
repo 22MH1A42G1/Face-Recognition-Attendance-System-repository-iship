@@ -1,0 +1,6 @@
+streamlit
+opencv-python
+numpy
+boto3
+python-dotenv
+Pillow
