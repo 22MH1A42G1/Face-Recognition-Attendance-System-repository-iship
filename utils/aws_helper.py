@@ -1,5 +1,3 @@
-# aws_helper.py
-
 import boto3
 import os
 import logging
@@ -16,10 +14,13 @@ logging.basicConfig(
 # -------------------- Load Environment Variables -------------------- #
 load_dotenv()
 
-AWS_REGION = os.getenv("AWS_REGION")
-ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID")
-SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-KNOWN_FOLDER = os.getenv("S3_FOLDER", "known_faces")
+AWS_REGION         = os.getenv("AWS_REGION")
+ACCESS_KEY         = os.getenv("AWS_ACCESS_KEY_ID")
+SECRET_KEY         = os.getenv("AWS_SECRET_ACCESS_KEY")
+S3_BUCKET          = os.getenv("S3_BUCKET", "known-faces-of-students-2025")
+UNKNOWN_FOLDER     = os.getenv("UNKNOWN_FOLDER", "unknown")
+KNOWN_FOLDER       = os.getenv("KNOWN_FOLDER", "known_faces")
+DYNAMO_TABLE_NAME  = os.getenv("DYNAMO_TABLE_NAME", "AttendanceRecords")  # ✅ FIXED: Replaced hardcoded value
 
 # -------------------- AWS Clients -------------------- #
 try:
@@ -91,12 +92,16 @@ def compare_faces(bucket, uploaded_key):
 # -------------------- Mark Attendance in DynamoDB -------------------- #
 def mark_attendance(name, bucket, uploaded_key):
     try:
-        table = dynamodb.Table("AttendanceRecords")
+        table = dynamodb.Table(DYNAMO_TABLE_NAME)  # ✅ FIXED: used env variable instead of hardcoded value
 
         item = {
-            "Name": name,
-            "Timestamp": datetime.now().isoformat(),
-            "Status": "Present"
+            "RecordID": str(uuid4()),  # ✅ Primary Key (recommended to make this HASH key)
+            "StudentName": name,
+            "TimeStamp": datetime.now().isoformat(),  # ✅ Consistent key naming
+            "Status": "Present",
+            "ImageURL": f"https://{bucket}.s3.amazonaws.com/{uploaded_key}",  # ✅ FIXED: changed s3:// to https:// for UI display
+            "Department": "CSE - AIML",  # Optional
+            "Year-PassOut": "2022-2026"  # Optional
         }
 
         table.put_item(Item=item)
@@ -106,4 +111,3 @@ def mark_attendance(name, bucket, uploaded_key):
     except Exception as e:
         logging.error("❌ Error marking attendance: %s", e)
         return False
-
