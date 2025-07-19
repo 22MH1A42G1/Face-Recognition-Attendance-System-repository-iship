@@ -1,23 +1,26 @@
 # app.py
 
 import streamlit as st # ✅ For Streamlit UI
+
 import cv2 # ✅ For video capture
+
 import numpy as np # ✅ For image processing
 from PIL import Image # ✅ For image processing
+
 import tempfile # ✅ For temporary file handling
 import os # ✅ For file handling
+
 from dotenv import load_dotenv # ✅ For loading environment variables
+
 from datetime import datetime  # ✅ For today's date filtering
+
 import pandas as pd            # ✅ If you're using dataframe to display
+
 import boto3                   # ✅ For DynamoDB admin access
+
 import io # ✅ For in-memory file handling
 
-
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
-from utils.aws_helper import upload_to_s3, compare_faces, mark_attendance
+import os # ✅ To handle file paths
 
 
 # ---------------- Import Required Libraries ---------------- #
@@ -27,9 +30,13 @@ from utils.aws_helper import upload_to_s3, compare_faces, mark_attendance
 
 # ---------------- Load Environment ---------------- #
 load_dotenv()
+ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID") 
+SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
 BUCKET = os.getenv("S3_BUCKET")
 UNKNOWN_FOLDER = "unknown"
-KNOWN_FOLDER = os.getenv("S3_FOLDER") or "known_faces"
+KNOWN_FOLDER = "known_faces"
+
 
 # ---------------- Page Configuration ---------------- #
 st.set_page_config(page_title="🎯 Face Recognition Attendance", layout="wide")
@@ -135,17 +142,17 @@ with st.sidebar.expander("🔐 Admin Login", expanded=False):
     if st.button("Login"):
         if password == "admin@2025":  # Change as needed or move to .env
             dynamodb = boto3.resource('dynamodb', region_name=os.getenv("AWS_REGION"))
-            table = dynamodb.Table("AttendanceRecords")
+            table = dynamodb.Table("AttendanceTable")
 
             # Filter only today's attendance
             today = datetime.now().date().isoformat()
             response = table.scan()
             items = response.get("Items", [])
-            todays_records = [i for i in items if i["Timestamp"].startswith(today)]
+            todays_records = [i for i in items if i["TimeStamp"].startswith(today)]
 
             if todays_records:
                 df = pd.DataFrame(todays_records)
-                df = df[["Name", "Timestamp", "Status"]]  # You can include "ImageURL" too if needed
+                df = df[["StudentName", "TimeStamp", "Status", "ImageURL", "RecordID", "Department", "Year-PassOut"]]  # You can include "ImageURL" too if needed
                 st.dataframe(df, use_container_width=True)
 
                 # Convert DataFrame to CSV
@@ -165,4 +172,4 @@ with st.sidebar.expander("🔐 Admin Login", expanded=False):
         else:
             st.error("❌ Invalid password")
 
-    
+# -------------------- End of Streamlit App -------------------- #
