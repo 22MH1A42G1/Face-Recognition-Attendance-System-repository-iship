@@ -11,6 +11,15 @@ from datetime import datetime  # ✅ For today's date filtering
 import pandas as pd            # ✅ If you're using dataframe to display
 import boto3                   # ✅ For DynamoDB admin access
 import io # ✅ For in-memory file handling
+
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
+from utils.aws_helper import upload_to_s3, compare_faces, mark_attendance
+
+
 # ---------------- Import Required Libraries ---------------- #
 # Import custom AWS helper functions
 from utils.aws_helper import upload_to_s3, compare_faces, mark_attendance
