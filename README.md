@@ -126,7 +126,5 @@ Developed by **Indana Aditya**
 🔗 [LinkedIn](https://www.linkedin.com/in/aditya-indana-899734216)
 💻 GitHub: [22MH1A42G1](https://github.com/22MH1A42G1/)
 
-Mentors: Mohammad Shaifu Zama, Durga Prasad Setti
-Project by **Technical Hub, Aditya Engineering College**
 
 ---
